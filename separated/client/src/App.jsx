@@ -29,6 +29,7 @@ const App = () => {
         onToVoting={actions.toVoting}
         onEndVoting={actions.endVoting}
         onContinueGame={actions.continueGame}
+        onRevealCard={actions.revealCard}
       />
     </div>
   );

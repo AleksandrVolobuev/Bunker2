@@ -17,11 +17,11 @@ const useRoomSelectors = (room, myPlayerId) => {
         needToEliminate: null,
         currentRound: null,
         canVote: false,
+        canReveal: false,
         isHost: false,
         allVoted: false,
         winners: [],
-        showChat: false,
-        showCards: false
+        showChat: false
       };
     }
 
@@ -33,10 +33,8 @@ const useRoomSelectors = (room, myPlayerId) => {
     const aliveOthers = alivePlayers.filter((player) => player.id !== myPlayerId);
 
     // Параметры игры.
-    const capacity = room.bunkerInfo ? room.bunkerInfo.capacity : null;
-    const needToEliminate = capacity !== null && capacity !== undefined
-      ? alivePlayersCount - capacity
-      : null;
+    const targetSurvivors = 2;
+    const needToEliminate = alivePlayersCount - targetSurvivors;
 
     const totalPlayers = players.length;
     const currentRound = totalPlayers && alivePlayersCount
@@ -45,11 +43,11 @@ const useRoomSelectors = (room, myPlayerId) => {
 
     // UI-флаги.
     const canVote = room.phase === 'VOTING' && me && me.isAlive;
+    const canReveal = room.phase === 'DISCUSSION' && me && me.isAlive && !me.hasRevealed;
     const isHost = Boolean(me && me.isHost);
     const allVoted = room.phase === 'VOTING' && alivePlayers.every((player) => player.hasVoted);
     const winners = room.phase === 'END' ? alivePlayers : [];
     const showChat = room.phase !== 'WAITING';
-    const showCards = ['REVEAL', 'DISCUSSION', 'VOTING', 'RESULTS', 'END'].includes(room.phase);
     // Бейджи статуса игрока.
     const playerBadges = (player) => {
       const badges = [];
@@ -88,11 +86,11 @@ const useRoomSelectors = (room, myPlayerId) => {
       needToEliminate,
       currentRound,
       canVote,
+      canReveal,
       isHost,
       allVoted,
       winners,
       showChat,
-      showCards,
       playerBadges,
       chatMessages,
       voteCounts

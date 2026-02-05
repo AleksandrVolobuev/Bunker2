@@ -23,7 +23,7 @@ const Winners = ({ room, selectors }) => {
         <div className="winners-list">
           {winners.map((winner) => (
             <p key={winner.id} className="winner-item">
-              ✓ {winner.name} ({winner.card.profession})
+              ✓ {winner.name}
             </p>
           ))}
         </div>

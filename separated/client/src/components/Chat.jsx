@@ -45,10 +45,17 @@ const Chat = ({ isVisible, messages, onSendMessage }) => {
       <div className="chat-messages" id="chatMessages" ref={messagesRef}>
         {/* Список сообщений */}
         {messages.map((message) => {
+          const isSystem = Boolean(message.isSystem);
           return (
-            <div key={message.id ?? `${message.playerId}-${message.timestamp}`} className={`chat-message ${!message.isAlive ? 'dead' : ''}`.trim()}>
+            <div
+              key={message.id ?? `${message.playerId}-${message.timestamp}`}
+              className={`chat-message ${!message.isAlive ? 'dead' : ''} ${isSystem ? 'system' : ''}`.trim()}
+            >
               <div className="chat-message-header">
-                <span className="chat-message-author">{message.playerName}{!message.isAlive ? ' 💀' : ''}</span>
+                <span className="chat-message-author">
+                  {isSystem ? 'Система' : message.playerName}
+                  {!message.isAlive && !isSystem ? ' 💀' : ''}
+                </span>
                 <span className="chat-message-time">{message.timeStr || ''}</span>
               </div>
               <div className="chat-message-text">{message.message}</div>

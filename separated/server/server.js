@@ -42,6 +42,31 @@ const PHASE_TIMERS = {
   VOTING: 60       // 1 минута на голосование
 };
 
+/* -------- Поля карточек -------- */
+const CARD_FIELDS = [
+  "profession",
+  "health",
+  "hobby",
+  "phobia",
+  "trait",
+  "baggage",
+  "fact",
+  "age",
+  "sex"
+];
+
+const CARD_FIELD_LABELS = {
+  profession: "Профессия",
+  health: "Здоровье",
+  hobby: "Хобби",
+  phobia: "Фобия",
+  trait: "Характер",
+  baggage: "Багаж",
+  fact: "Факт",
+  age: "Возраст",
+  sex: "Пол"
+};
+
 /* -------- Расширенные карты -------- */
 const PROFESSIONS = [
   "Врач", "Инженер", "Учитель", "Повар", "Программист",
@@ -94,6 +119,8 @@ function createPlayer(name, socketId, isHost) {
     isHost,
     isAlive: true,
     card: null,
+    revealed: null,
+    hasRevealed: false,
     hasVoted: false
   };
 }
@@ -146,9 +173,8 @@ function getPublicRoom(room) {
       isHost: p.isHost,
       isAlive: p.isAlive,
       hasVoted: p.hasVoted,
-      card: room.phase === PHASES.REVEAL || room.phase === PHASES.DISCUSSION || 
-            room.phase === PHASES.VOTING || room.phase === PHASES.RESULTS || 
-            room.phase === PHASES.END ? p.card : null
+      hasRevealed: p.hasRevealed,
+      revealed: p.revealed || null
     })),
     votes: room.votes,
     voteResult: room.voteResult,
@@ -190,13 +216,23 @@ function stopTimer(room) {
   room.timer = null;
 }
 
+function startDiscussionPhase(room) {
+  room.phase = PHASES.DISCUSSION;
+  room.round = (room.round || 0) + 1;
+  room.players.forEach(p => {
+    p.hasRevealed = false;
+    p.revealed = null;
+  });
+  stopTimer(room);
+  startTimer(room, PHASE_TIMERS.DISCUSSION);
+}
+
 function handleTimerEnd(room) {
   console.log(`⏰ Таймер закончился для комнаты ${room.id}, фаза: ${room.phase}`);
   
   if (room.phase === PHASES.REVEAL) {
     // Автоматический переход к обсуждению
-    room.phase = PHASES.DISCUSSION;
-    startTimer(room, PHASE_TIMERS.DISCUSSION);
+    startDiscussionPhase(room);
     io.to(room.id).emit("roomUpdate", getPublicRoom(room));
     
   } else if (room.phase === PHASES.DISCUSSION) {
@@ -259,6 +295,7 @@ io.on("connection", socket => {
     rooms[roomId] = {
       id: roomId,
       phase: PHASES.WAITING,
+      round: 0,
       players: [player],
       votes: {},
       voteResult: null,
@@ -337,6 +374,11 @@ io.on("connection", socket => {
     console.log(`🎮 Игра началась! Игроков: ${playerCount}, Мест в бункере: ${room.bunkerInfo.capacity}, Раундов: ~${playerCount - room.bunkerInfo.capacity}`);
 
     room.phase = PHASES.REVEAL;
+    room.round = 0;
+    room.players.forEach(p => {
+      p.hasRevealed = false;
+      p.revealed = null;
+    });
     dealCards(room);
     startTimer(room, PHASE_TIMERS.REVEAL); // 🔥 Запускаем таймер
     io.to(roomId).emit("roomUpdate", getPublicRoom(room));
@@ -349,9 +391,7 @@ io.on("connection", socket => {
     const host = room.players.find(p => p.isHost);
     if (!host || host.socketId !== socket.id) return;
 
-    room.phase = PHASES.DISCUSSION;
-    stopTimer(room); // Останавливаем старый таймер
-    startTimer(room, PHASE_TIMERS.DISCUSSION); // 🔥 Запускаем новый
+    startDiscussionPhase(room);
     io.to(roomId).emit("roomUpdate", getPublicRoom(room));
   });
 
@@ -367,6 +407,65 @@ io.on("connection", socket => {
     room.players.forEach(p => p.hasVoted = false);
     stopTimer(room); // Останавливаем старый таймер
     startTimer(room, PHASE_TIMERS.VOTING); // 🔥 Запускаем новый
+    io.to(roomId).emit("roomUpdate", getPublicRoom(room));
+  });
+
+  socket.on("revealCard", ({ roomId, field }) => {
+    const room = rooms[roomId];
+    if (!room || room.phase !== PHASES.DISCUSSION) return;
+
+    const player = room.players.find(p => p.socketId === socket.id);
+    if (!player || !player.isAlive) return;
+
+    if (player.hasRevealed) {
+      socket.emit("error", "Можно раскрыть только одну карту за раунд");
+      return;
+    }
+
+    if (!player.card) {
+      socket.emit("error", "Карта не найдена");
+      return;
+    }
+
+    if (!CARD_FIELDS.includes(field)) {
+      socket.emit("error", "Неверное поле карты");
+      return;
+    }
+
+    const card = player.card;
+    if (card[field] === undefined) {
+      socket.emit("error", "Поле карты не найдено");
+      return;
+    }
+
+    const label = CARD_FIELD_LABELS[field] || field;
+    const rawValue = card[field];
+    const value = field === "age" ? `${rawValue} лет` : rawValue;
+
+    player.revealed = {
+      field,
+      label,
+      value,
+      round: room.round || 0
+    };
+    player.hasRevealed = true;
+
+    const systemMessage = {
+      id: randomUUID(),
+      playerId: player.id,
+      playerName: player.name,
+      isAlive: player.isAlive,
+      isSystem: true,
+      message: `Показал: ${label} — ${value}`,
+      timestamp: Date.now()
+    };
+
+    room.messages.push(systemMessage);
+    if (room.messages.length > 100) {
+      room.messages = room.messages.slice(-100);
+    }
+
+    io.to(roomId).emit("newMessage", systemMessage);
     io.to(roomId).emit("roomUpdate", getPublicRoom(room));
   });
 
@@ -431,13 +530,12 @@ io.on("connection", socket => {
 
     const alivePlayers = room.players.filter(p => p.isAlive);
     
-    if (alivePlayers.length <= room.bunkerInfo.capacity) {
+    if (alivePlayers.length <= 2) {
       room.phase = PHASES.END;
       stopTimer(room); // 🔥 Останавливаем таймер
     } else {
-      room.phase = PHASES.DISCUSSION;
       room.voteResult = null;
-      startTimer(room, PHASE_TIMERS.DISCUSSION); // 🔥 Запускаем новый раунд
+      startDiscussionPhase(room);
     }
     
     io.to(roomId).emit("roomUpdate", getPublicRoom(room));

@@ -25,8 +25,8 @@ const BunkerInfo = ({ room, selectors }) => {
           <p>{room.catastrophe}</p>
         </div>
         <div className="info-box">
-          <h3>Вместимость</h3>
-          <p>{room.bunkerInfo.capacity} {room.bunkerInfo.capacity === 1 ? 'место' : 'мест'}</p>
+          <h3>Финалистов</h3>
+          <p>2</p>
         </div>
         <div className="info-box">
           <h3>Раунд</h3>

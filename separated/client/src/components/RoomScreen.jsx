@@ -13,7 +13,7 @@ import useRoomViewModel from '../hooks/useRoomViewModel.js';
 
 /**
  * Экран комнаты с игровым процессом.
- * @param {{ isActive: boolean, room: Object|null, myPlayerId: string|null, myCard: Object|null, timer: number|null, onSendMessage: Function, onVote: Function, onStartGame: Function, onToDiscussion: Function, onToVoting: Function, onEndVoting: Function, onContinueGame: Function }} props
+ * @param {{ isActive: boolean, room: Object|null, myPlayerId: string|null, myCard: Object|null, timer: number|null, onSendMessage: Function, onVote: Function, onStartGame: Function, onToDiscussion: Function, onToVoting: Function, onEndVoting: Function, onContinueGame: Function, onRevealCard: Function }} props
  * @returns {JSX.Element}
  */
 const RoomScreen = ({
@@ -28,7 +28,8 @@ const RoomScreen = ({
   onToDiscussion,
   onToVoting,
   onEndVoting,
-  onContinueGame
+  onContinueGame,
+  onRevealCard
 }) => {
   // Селекторы и вью-модель для упрощения UI.
   const selectors = useRoomSelectors(room, myPlayerId);
@@ -52,8 +53,16 @@ const RoomScreen = ({
           {viewModel.phaseLabel}
         </div>
 
-        {/* Карта текущего игрока */}
-        {viewModel.hasCard ? <MyCard card={myCard} /> : <div id="yourCardDiv" className="hidden"></div>}
+        {/* Карты текущего игрока */}
+        {viewModel.hasCard ? (
+          <MyCard
+            card={myCard}
+            canReveal={selectors.canReveal}
+            onReveal={onRevealCard}
+          />
+        ) : (
+          <div id="yourCardDiv" className="hidden"></div>
+        )}
 
         {/* Чат */}
         <Chat

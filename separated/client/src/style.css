@@ -325,6 +325,53 @@ input[type="text"]:focus {
   font-weight: 700;
 }
 
+.revealed-line {
+  margin-bottom: 12px;
+  padding: 10px;
+  background: rgba(255, 165, 2, 0.1);
+  border-left: 3px solid var(--secondary);
+  border-radius: 8px;
+  color: var(--light);
+  font-weight: 700;
+}
+
+.my-card-actions {
+  margin-top: 15px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.my-card-label {
+  font-size: 0.9rem;
+  color: var(--secondary);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.my-card-select {
+  padding: 10px;
+  background: rgba(10, 14, 19, 0.8);
+  border: 2px solid rgba(255, 165, 2, 0.3);
+  border-radius: 8px;
+  color: var(--light);
+  font-size: 1rem;
+  font-family: 'Roboto Condensed', sans-serif;
+}
+
+.my-card-select:focus {
+  outline: none;
+  border-color: var(--secondary);
+  box-shadow: 0 0 10px rgba(255, 165, 2, 0.3);
+}
+
+.my-card-hint {
+  width: 100%;
+  font-size: 0.9rem;
+  color: rgba(255, 165, 2, 0.7);
+}
+
 .host-error {
   color: var(--danger);
   text-align: center;

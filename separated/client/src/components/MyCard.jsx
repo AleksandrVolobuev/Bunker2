@@ -1,14 +1,33 @@
-import React from 'react';
+import React, { useMemo, useState } from 'react';
+
+const FIELD_OPTIONS = [
+  { value: 'profession', label: 'Профессия' },
+  { value: 'health', label: 'Здоровье' },
+  { value: 'hobby', label: 'Хобби' },
+  { value: 'phobia', label: 'Фобия' },
+  { value: 'trait', label: 'Характер' },
+  { value: 'baggage', label: 'Багаж' },
+  { value: 'fact', label: 'Факт' },
+  { value: 'age', label: 'Возраст' },
+  { value: 'sex', label: 'Пол' }
+];
 
 /**
- * Карточка персонажа текущего игрока.
- * @param {{ card: Object|null }} props
+ * Карта персонажа текущего игрока с возможностью раскрытия одного поля за раунд.
+ * @param {{ card: Object|null, canReveal: boolean, onReveal: Function }} props
  * @returns {JSX.Element|null}
  */
-const MyCard = ({ card }) => {
+const MyCard = ({ card, canReveal, onReveal }) => {
+  const defaultField = useMemo(() => 'profession', []);
+  const [selectedField, setSelectedField] = useState(defaultField);
+
   if (!card) {
     return null;
   }
+
+  const handleReveal = () => {
+    onReveal(selectedField || 'profession');
+  };
 
   return (
     <div id="yourCardDiv">
@@ -52,12 +71,36 @@ const MyCard = ({ card }) => {
             <value>{card.sex}</value>
           </div>
         </div>
+
+        <div className="my-card-actions">
+          <label className="my-card-label" htmlFor="revealField">Что показать:</label>
+          <select
+            id="revealField"
+            className="my-card-select"
+            value={selectedField}
+            onChange={(event) => setSelectedField(event.target.value)}
+            disabled={!canReveal}
+          >
+            {FIELD_OPTIONS.map((option) => (
+              <option key={option.value} value={option.value}>{option.label}</option>
+            ))}
+          </select>
+          <button
+            className="btn btn-secondary"
+            onClick={handleReveal}
+            disabled={!canReveal}
+          >
+            Показать
+          </button>
+          {!canReveal ? (
+            <p className="my-card-hint">Карта уже раскрыта в этом раунде.</p>
+          ) : null}
+        </div>
       </div>
     </div>
   );
 };
 
-// Мемоизация: сравнение ключевых полей карты.
 const areEqual = (prevProps, nextProps) => {
   const prev = prevProps.card;
   const next = nextProps.card;
@@ -78,7 +121,8 @@ const areEqual = (prevProps, nextProps) => {
     prev.baggage === next.baggage &&
     prev.fact === next.fact &&
     prev.age === next.age &&
-    prev.sex === next.sex
+    prev.sex === next.sex &&
+    prevProps.canReveal === nextProps.canReveal
   );
 };
 

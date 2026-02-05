@@ -118,6 +118,19 @@ const useGameState = () => {
     socket.emit('continueGame', { roomId: room.id });
   };
 
+  // Раскрыть карту (одно поле) в фазе обсуждения.
+  const revealCard = (field) => {
+    const socket = socketRef.current;
+    if (!socket || !room) {
+      return;
+    }
+
+    socket.emit('revealCard', {
+      roomId: room.id,
+      field
+    });
+  };
+
   // Отправка сообщения в чат.
   const sendMessage = (message) => {
     const socket = socketRef.current;
@@ -164,6 +177,9 @@ const useGameState = () => {
 
     socket.on('roomUpdate', (nextRoom) => {
       setRoom(nextRoom);
+      if (screen !== 'room') {
+        setScreen('room');
+      }
 
       if (!myPlayerIdRef.current) {
         const me = nextRoom.players.find((player) => player.socketId === socket.id);
@@ -179,7 +195,7 @@ const useGameState = () => {
     });
 
     socket.on('yourCard', (card) => {
-      setMyCard(card);
+      setMyCard(card || null);
     });
 
     socket.on('error', (message) => {
@@ -231,7 +247,8 @@ const useGameState = () => {
       vote,
       endVoting,
       continueGame,
-      sendMessage
+      sendMessage,
+      revealCard
     }
   };
 };
