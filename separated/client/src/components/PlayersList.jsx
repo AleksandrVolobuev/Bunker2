@@ -25,7 +25,7 @@ const PlayersList = ({ room, selectors }) => {
               <div className="player-name">{player.name}</div>
               <div className="player-badges">
                 {badges.map((label) => (
-                  <span key={label} className={`badge badge-${label === 'Хост' ? 'host' : label === 'Выбыл' ? 'dead' : 'voted'}`}>
+                  <span key={label} className={`badge type-badge badge-${label === 'Хост' ? 'host' : label === 'Выбыл' ? 'dead' : 'voted'}`}>
                     {label}
                   </span>
                 ))}
@@ -33,7 +33,7 @@ const PlayersList = ({ room, selectors }) => {
             </div>
             {/* Открытая информация игрока */}
             {player.revealed ? (
-              <div className="revealed-line">
+              <div className="revealed-line type-meta">
                 Показал: {player.revealed.label} — {player.revealed.value}
               </div>
             ) : null}

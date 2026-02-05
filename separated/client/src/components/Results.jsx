@@ -16,7 +16,7 @@ const Results = ({ room, selectors }) => {
   return (
     <div id="resultsSection">
       <div className="results-box">
-        <h2>Исключён из бункера</h2>
+        <h2 className="type-title">Исключён из бункера</h2>
         <div className="eliminated-name">{room.voteResult.eliminatedName}</div>
         <div className="vote-counts">
           <h3 className="results-title">Результаты голосования:</h3>

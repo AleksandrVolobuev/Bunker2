@@ -41,7 +41,7 @@ const Chat = ({ isVisible, messages, onSendMessage }) => {
 
   return (
     <div id="chatContainer" className="chat-container">
-      <div className="chat-header">💬 Чат</div>
+      <div className="chat-header type-title">💬 Чат</div>
       <div className="chat-messages" id="chatMessages" ref={messagesRef}>
         {/* Список сообщений */}
         {messages.map((message) => {
@@ -52,11 +52,11 @@ const Chat = ({ isVisible, messages, onSendMessage }) => {
               className={`chat-message ${!message.isAlive ? 'dead' : ''} ${isSystem ? 'system' : ''}`.trim()}
             >
               <div className="chat-message-header">
-                <span className="chat-message-author">
+                <span className="chat-message-author type-meta">
                   {isSystem ? 'Система' : message.playerName}
                   {!message.isAlive && !isSystem ? ' 💀' : ''}
                 </span>
-                <span className="chat-message-time">{message.timeStr || ''}</span>
+                <span className="chat-message-time type-meta">{message.timeStr || ''}</span>
               </div>
               <div className="chat-message-text">{message.message}</div>
             </div>
@@ -74,7 +74,7 @@ const Chat = ({ isVisible, messages, onSendMessage }) => {
           onChange={(event) => setDraft(event.target.value)}
           onKeyPress={handleKeyPress}
         />
-        <button className="chat-send-btn" onClick={handleSend}>Отправить</button>
+        <button className="chat-send-btn type-button" onClick={handleSend}>Отправить</button>
       </div>
     </div>
   );

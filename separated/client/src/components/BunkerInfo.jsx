@@ -18,7 +18,7 @@ const BunkerInfo = ({ room, selectors }) => {
 
   return (
     <div id="bunkerInfo" className="bunker-info">
-      <h2 className="bunker-title">Информация о бункере</h2>
+      <h2 className="bunker-title type-title">Информация о бункере</h2>
       <div className="info-grid" id="bunkerInfoGrid">
         <div className="info-box">
           <h3>Катастрофа</h3>

@@ -32,48 +32,48 @@ const MyCard = ({ card, canReveal, onReveal }) => {
   return (
     <div id="yourCardDiv">
       <div className="your-card">
-        <h2>Ваш персонаж</h2>
+        <h2 className="type-title">Ваш персонаж</h2>
         <div className="character-info">
           <div className="character-field">
-            <label>Профессия</label>
+                  <label className="type-meta">Профессия</label>
             <value>{card.profession}</value>
           </div>
           <div className="character-field">
-            <label>Здоровье</label>
+                  <label className="type-meta">Здоровье</label>
             <value>{card.health}</value>
           </div>
           <div className="character-field">
-            <label>Хобби</label>
+                  <label className="type-meta">Хобби</label>
             <value>{card.hobby}</value>
           </div>
           <div className="character-field">
-            <label>Фобия</label>
+                  <label className="type-meta">Фобия</label>
             <value>{card.phobia}</value>
           </div>
           <div className="character-field">
-            <label>Характер</label>
+                  <label className="type-meta">Характер</label>
             <value>{card.trait}</value>
           </div>
           <div className="character-field">
-            <label>Багаж</label>
+                  <label className="type-meta">Багаж</label>
             <value>{card.baggage}</value>
           </div>
           <div className="character-field">
-            <label>Факт</label>
+                  <label className="type-meta">Факт</label>
             <value>{card.fact}</value>
           </div>
           <div className="character-field">
-            <label>Возраст</label>
+                  <label className="type-meta">Возраст</label>
             <value>{card.age} лет</value>
           </div>
           <div className="character-field">
-            <label>Пол</label>
+                  <label className="type-meta">Пол</label>
             <value>{card.sex}</value>
           </div>
         </div>
 
         <div className="my-card-actions">
-          <label className="my-card-label" htmlFor="revealField">Что показать:</label>
+          <label className="my-card-label type-meta" htmlFor="revealField">Что показать:</label>
           <select
             id="revealField"
             className="my-card-select"
@@ -86,14 +86,14 @@ const MyCard = ({ card, canReveal, onReveal }) => {
             ))}
           </select>
           <button
-            className="btn btn-secondary"
+            className="btn btn-secondary type-button"
             onClick={handleReveal}
             disabled={!canReveal}
           >
             Показать
           </button>
           {!canReveal ? (
-            <p className="my-card-hint">Карта уже раскрыта в этом раунде.</p>
+            <p className="my-card-hint type-meta">Карта уже раскрыта в этом раунде.</p>
           ) : null}
         </div>
       </div>

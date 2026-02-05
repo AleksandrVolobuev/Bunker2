@@ -25,12 +25,12 @@ const Voting = ({ room, selectors, onVote }) => {
 
   return (
     <div id="votingSection">
-      <h3 className="voting-title">Голосование за исключение</h3>
+      <h3 className="voting-title type-title">Голосование за исключение</h3>
       <div className="vote-buttons">
         {aliveOthers.map((player) => (
           <button
             key={player.id}
-            className="vote-btn"
+            className="vote-btn type-button"
             onClick={() => onVote(player.id)}
             disabled={me.hasVoted}
           >

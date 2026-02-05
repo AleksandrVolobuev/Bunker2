@@ -39,8 +39,8 @@ const RoomScreen = ({
     <div id="roomScreen" className={`screen ${isActive ? 'active' : ''}`.trim()}>
       <div className="card">
         {/* Заголовок комнаты */}
-        <div className="room-code" id="displayRoomCode">{viewModel.roomCode}</div>
-        <p className="room-hint">Поделитесь этим кодом с друзьями</p>
+        <div className="room-code type-title" id="displayRoomCode">{viewModel.roomCode}</div>
+        <p className="room-hint type-meta">Поделитесь этим кодом с друзьями</p>
 
         {/* Таймер фазы */}
         <Timer seconds={viewModel.timer} />
@@ -72,7 +72,7 @@ const RoomScreen = ({
         />
 
         {/* Список игроков */}
-        <h3 className="section-title">Игроки</h3>
+        <h3 className="section-title type-title">Игроки</h3>
         <PlayersList room={room} selectors={selectors} />
 
         {/* Голосование */}

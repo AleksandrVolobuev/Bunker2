@@ -24,7 +24,7 @@ const MainScreen = ({ isActive, onCreateRoom, onJoinRoom, errorMessage }) => {
       {/* Форма создания комнаты */}
       <div className="card">
         <div className="input-group">
-          <label htmlFor="playerName">Ваше имя</label>
+          <label className="type-meta" htmlFor="playerName">Ваше имя</label>
           <input
             type="text"
             id="playerName"
@@ -35,14 +35,14 @@ const MainScreen = ({ isActive, onCreateRoom, onJoinRoom, errorMessage }) => {
           />
         </div>
         <div className="btn-group">
-          <button className="btn" onClick={handleCreate}>Создать комнату</button>
+          <button className="btn type-button" onClick={handleCreate}>Создать комнату</button>
         </div>
       </div>
 
       {/* Форма входа по коду */}
       <div className="card">
         <div className="input-group">
-          <label htmlFor="roomCode">Код комнаты</label>
+          <label className="type-meta" htmlFor="roomCode">Код комнаты</label>
           <input
             type="text"
             id="roomCode"
@@ -53,7 +53,7 @@ const MainScreen = ({ isActive, onCreateRoom, onJoinRoom, errorMessage }) => {
           />
         </div>
         <div className="btn-group">
-          <button className="btn btn-secondary" onClick={handleJoin}>Присоединиться</button>
+          <button className="btn btn-secondary type-button" onClick={handleJoin}>Присоединиться</button>
         </div>
       </div>
 

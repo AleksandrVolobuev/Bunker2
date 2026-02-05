@@ -37,27 +37,27 @@ const HostControls = ({ room, selectors, onStartGame, onToDiscussion, onToVoting
   if (room.phase === 'WAITING') {
     const disabled = room.players.length < 2;
     content = (
-      <button className="btn" onClick={onStartGame} disabled={disabled}>
+      <button className="btn type-button" onClick={onStartGame} disabled={disabled}>
         Начать игру ({room.players.length} {room.players.length === 1 ? 'игрок' : 'игрока'})
       </button>
     );
   } else if (room.phase === 'REVEAL') {
     content = (
-      <button className="btn btn-secondary" onClick={onToDiscussion}>Начать обсуждение</button>
+      <button className="btn btn-secondary type-button" onClick={onToDiscussion}>Начать обсуждение</button>
     );
   } else if (room.phase === 'DISCUSSION') {
     content = (
-      <button className="btn" onClick={onToVoting}>Начать голосование</button>
+      <button className="btn type-button" onClick={onToVoting}>Начать голосование</button>
     );
   } else if (room.phase === 'VOTING') {
     content = (
-      <button className="btn" onClick={onEndVoting} disabled={!allVoted}>
+      <button className="btn type-button" onClick={onEndVoting} disabled={!allVoted}>
         Завершить голосование {allVoted ? '' : '(ждём всех)'}
       </button>
     );
   } else if (room.phase === 'RESULTS') {
     content = (
-      <button className="btn btn-secondary" onClick={onContinueGame}>Продолжить</button>
+      <button className="btn btn-secondary type-button" onClick={onContinueGame}>Продолжить</button>
     );
   }
 

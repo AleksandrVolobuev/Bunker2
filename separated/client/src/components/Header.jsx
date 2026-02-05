@@ -6,8 +6,8 @@ import React from 'react';
  */
 const Header = () => (
   <div className="header">
-    <h1 className="title">БУНКЕР</h1>
-    <p className="subtitle">Игра на выживание</p>
+    <h1 className="title type-title">БУНКЕР</h1>
+    <p className="subtitle type-subtitle">Игра на выживание</p>
   </div>
 );
 

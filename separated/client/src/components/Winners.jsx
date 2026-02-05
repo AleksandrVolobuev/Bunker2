@@ -16,7 +16,7 @@ const Winners = ({ room, selectors }) => {
   return (
     <div id="winnersSection">
       <div className="winners-box">
-        <h2>🎉 Выжившие в бункере 🎉</h2>
+        <h2 className="type-title">🎉 Выжившие в бункере 🎉</h2>
         <p className="winners-subtitle">
           Эти {winners.length} {winners.length === 1 ? 'человек' : 'человека'} смогут начать новую жизнь после катастрофы!
         </p>
