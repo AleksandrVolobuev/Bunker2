@@ -140,6 +140,16 @@ body::before {
   animation: fadeInDown 0.8s ease;
 }
 
+.header-actions {
+  display: flex;
+  justify-content: center;
+  margin-top: var(--space-5);
+}
+
+.music-toggle {
+  min-width: calc(140px + 4vw);
+}
+
 /* Typography presets */
 .type-title {
   font-family: 'Bebas Neue', cursive;
@@ -666,6 +676,22 @@ input[type="text"]:focus {
   color: var(--secondary);
   margin-bottom: var(--space-7);
   letter-spacing: var(--ls-your-card-title);
+}
+
+.my-card-image-wrap {
+  display: flex;
+  justify-content: center;
+  margin-bottom: var(--space-7);
+}
+
+.my-card-image {
+  width: min(100%, calc(220px + 8vw));
+  max-width: calc(320px + 6vw);
+  height: auto;
+  border-radius: var(--radius-4);
+  border: calc(2px + 0.1vw) solid rgba(255, 165, 2, 0.4);
+  box-shadow: 0 calc(6px + 0.4vw) calc(18px + 0.9vw) rgba(0, 0, 0, 0.4);
+  object-fit: cover;
 }
 
 .vote-buttons {

@@ -33,6 +33,16 @@ const MyCard = ({ card, canReveal, onReveal }) => {
     <div id="yourCardDiv">
       <div className="your-card">
         <h2 className="type-title">Ваш персонаж</h2>
+        {card.professionImage ? (
+          <div className="my-card-image-wrap">
+            <img
+              className="my-card-image"
+              src={`/images/${card.professionImage}`}
+              alt={`Профессия: ${card.profession}`}
+              loading="lazy"
+            />
+          </div>
+        ) : null}
         <div className="character-info">
           <div className="character-field">
                   <label className="type-meta">Профессия</label>
@@ -122,6 +132,7 @@ const areEqual = (prevProps, nextProps) => {
     prev.fact === next.fact &&
     prev.age === next.age &&
     prev.sex === next.sex &&
+    prev.professionImage === next.professionImage &&
     prevProps.canReveal === nextProps.canReveal
   );
 };

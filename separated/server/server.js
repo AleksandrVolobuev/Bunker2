@@ -69,10 +69,34 @@ const CARD_FIELD_LABELS = {
 
 /* -------- Расширенные карты -------- */
 const PROFESSIONS = [
-  "Врач", "Инженер", "Учитель", "Повар", "Программист",
-  "Фермер", "Механик", "Биолог", "Психолог", "Строитель",
-  "Музыкант", "Художник", "Юрист", "Спасатель", "Электрик"
+  "Архитектор", "Дизайнер", "Врач", "Инженер", "Повар",
+  "Программист", "Фермер", "Механик", "Офицер", "Пилот",
+  "Писатель", "Полицейский", "Пожарный", "Солдат", "Строитель",
+  "Техник", "Ученый", "Учитель", "Художник", "Электрик"
 ];
+
+const PROFESSION_IMAGE_MAP = {
+  "Архитектор": "architect",
+  "Дизайнер": "designer",
+  "Врач": "doctor",
+  "Инженер": "engineer",
+  "Повар": "chef",
+  "Программист": "programmer",
+  "Фермер": "farmer",
+  "Механик": "mechanic",
+  "Офицер": "officer",
+  "Пилот": "pilot",
+  "Писатель": "writer",
+  "Полицейский": "police-officer",
+  "Пожарный": "firefighter",
+  "Солдат": "soldier",
+  "Строитель": "builder",
+  "Техник": "technician",
+  "Ученый": "scientist",
+  "Учитель": "teacher",
+  "Художник": "artist",
+  "Электрик": "electrician"
+};
 
 const HEALTH = [
   "Здоров", "Астма", "Диабет", "Бессонница", "Аллергия на пыльцу",
@@ -126,8 +150,13 @@ function createPlayer(name, socketId, isHost) {
 }
 
 function generateCard() {
+  const profession = PROFESSIONS[Math.floor(Math.random() * PROFESSIONS.length)];
+  const sex = Math.random() > 0.5 ? "Мужчина" : "Женщина";
+  const professionKey = PROFESSION_IMAGE_MAP[profession] || "unknown";
+  const genderKey = sex === "Женщина" ? "f" : "m";
+
   return {
-    profession: PROFESSIONS[Math.floor(Math.random() * PROFESSIONS.length)],
+    profession,
     health: HEALTH[Math.floor(Math.random() * HEALTH.length)],
     hobby: HOBBIES[Math.floor(Math.random() * HOBBIES.length)],
     phobia: PHOBIAS[Math.floor(Math.random() * PHOBIAS.length)],
@@ -135,7 +164,8 @@ function generateCard() {
     baggage: BAGGAGE[Math.floor(Math.random() * BAGGAGE.length)],
     fact: FACTS[Math.floor(Math.random() * FACTS.length)],
     age: Math.floor(Math.random() * 50) + 18,
-    sex: Math.random() > 0.5 ? "Мужчина" : "Женщина"
+    sex,
+    professionImage: `${professionKey}-${genderKey}.png`
   };
 }
 
