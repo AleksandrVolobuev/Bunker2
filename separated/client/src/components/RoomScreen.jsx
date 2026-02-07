@@ -34,7 +34,6 @@ const RoomScreen = ({
   // Селекторы и вью-модель для упрощения UI.
   const selectors = useRoomSelectors(room, myPlayerId);
   const viewModel = useRoomViewModel(room, selectors, myCard, timer);
-
   return (
     <div id="roomScreen" className={`screen ${isActive ? 'active' : ''}`.trim()}>
       <div className="card">
@@ -57,6 +56,7 @@ const RoomScreen = ({
         {viewModel.hasCard ? (
           <MyCard
             card={myCard}
+            cardFields={room?.cardFields || []}
             canReveal={selectors.canReveal}
             onReveal={onRevealCard}
           />

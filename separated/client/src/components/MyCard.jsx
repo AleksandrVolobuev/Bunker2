@@ -1,23 +1,35 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
-const FIELD_OPTIONS = [
-  { value: 'profession', label: 'Профессия' },
-  { value: 'health', label: 'Здоровье' },
-  { value: 'hobby', label: 'Хобби' },
-  { value: 'phobia', label: 'Фобия' },
-  { value: 'trait', label: 'Характер' },
-  { value: 'baggage', label: 'Багаж' },
-  { value: 'fact', label: 'Факт' },
-  { value: 'age', label: 'Возраст' },
-  { value: 'sex', label: 'Пол' }
+const FIELD_LABELS = {
+  profession: 'Профессия',
+  health: 'Здоровье',
+  hobby: 'Хобби',
+  phobia: 'Фобия',
+  trait: 'Характер',
+  baggage: 'Багаж',
+  fact: 'Факт',
+  age: 'Возраст',
+  sex: 'Пол'
+};
+
+const FIELD_ORDER = [
+  'profession',
+  'health',
+  'hobby',
+  'phobia',
+  'trait',
+  'baggage',
+  'fact',
+  'age',
+  'sex'
 ];
 
 /**
  * Карта персонажа текущего игрока с возможностью раскрытия одного поля за раунд.
- * @param {{ card: Object|null, canReveal: boolean, onReveal: Function }} props
+ * @param {{ card: Object|null, cardFields: string[], canReveal: boolean, onReveal: Function }} props
  * @returns {JSX.Element|null}
  */
-const MyCard = ({ card, canReveal, onReveal }) => {
+const MyCard = ({ card, cardFields, canReveal, onReveal }) => {
   const defaultField = useMemo(() => 'profession', []);
   const [selectedField, setSelectedField] = useState(defaultField);
 
@@ -25,8 +37,22 @@ const MyCard = ({ card, canReveal, onReveal }) => {
     return null;
   }
 
+  const availableFields = useMemo(() => {
+    if (Array.isArray(cardFields) && cardFields.length > 0) {
+      return FIELD_ORDER.filter((field) => cardFields.includes(field));
+    }
+    return FIELD_ORDER.filter((field) => field in card);
+  }, [cardFields, card]);
+
+  useEffect(() => {
+    if (availableFields.length > 0 && !availableFields.includes(selectedField)) {
+      setSelectedField(availableFields[0]);
+    }
+  }, [availableFields, selectedField]);
+
   const handleReveal = () => {
-    onReveal(selectedField || 'profession');
+    const fieldToReveal = selectedField || availableFields[0] || 'profession';
+    onReveal(fieldToReveal);
   };
 
   return (
@@ -44,42 +70,17 @@ const MyCard = ({ card, canReveal, onReveal }) => {
           </div>
         ) : null}
         <div className="character-info">
-          <div className="character-field">
-                  <label className="type-meta">Профессия</label>
-            <value>{card.profession}</value>
-          </div>
-          <div className="character-field">
-                  <label className="type-meta">Здоровье</label>
-            <value>{card.health}</value>
-          </div>
-          <div className="character-field">
-                  <label className="type-meta">Хобби</label>
-            <value>{card.hobby}</value>
-          </div>
-          <div className="character-field">
-                  <label className="type-meta">Фобия</label>
-            <value>{card.phobia}</value>
-          </div>
-          <div className="character-field">
-                  <label className="type-meta">Характер</label>
-            <value>{card.trait}</value>
-          </div>
-          <div className="character-field">
-                  <label className="type-meta">Багаж</label>
-            <value>{card.baggage}</value>
-          </div>
-          <div className="character-field">
-                  <label className="type-meta">Факт</label>
-            <value>{card.fact}</value>
-          </div>
-          <div className="character-field">
-                  <label className="type-meta">Возраст</label>
-            <value>{card.age} лет</value>
-          </div>
-          <div className="character-field">
-                  <label className="type-meta">Пол</label>
-            <value>{card.sex}</value>
-          </div>
+          {availableFields.map((field) => {
+            const label = FIELD_LABELS[field] || field;
+            const rawValue = card[field];
+            const value = field === 'age' ? `${rawValue} лет` : rawValue;
+            return (
+              <div className="character-field" key={field}>
+                <label className="type-meta">{label}</label>
+                <value>{value}</value>
+              </div>
+            );
+          })}
         </div>
 
         <div className="my-card-actions">
@@ -91,8 +92,8 @@ const MyCard = ({ card, canReveal, onReveal }) => {
             onChange={(event) => setSelectedField(event.target.value)}
             disabled={!canReveal}
           >
-            {FIELD_OPTIONS.map((option) => (
-              <option key={option.value} value={option.value}>{option.label}</option>
+            {availableFields.map((field) => (
+              <option key={field} value={field}>{FIELD_LABELS[field] || field}</option>
             ))}
           </select>
           <button
@@ -133,7 +134,8 @@ const areEqual = (prevProps, nextProps) => {
     prev.age === next.age &&
     prev.sex === next.sex &&
     prev.professionImage === next.professionImage &&
-    prevProps.canReveal === nextProps.canReveal
+    prevProps.canReveal === nextProps.canReveal &&
+    (prevProps.cardFields || []).join('|') === (nextProps.cardFields || []).join('|')
   );
 };
 

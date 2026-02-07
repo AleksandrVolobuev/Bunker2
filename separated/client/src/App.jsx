@@ -77,8 +77,24 @@ const App = () => {
     activeTrackRef.current = desiredTrack;
   }, [state.screen, musicEnabled, hasUserInteracted]);
 
+  const backgroundImage = state.screen === 'room'
+    ? state.room?.catastropheImage
+      ? `/images/${state.room.catastropheImage}`
+      : null
+    : state.screen === 'main'
+      ? '/images/bunker.jpg'
+      : null;
+
+  const containerStyle = backgroundImage
+    ? { backgroundImage: `url(${backgroundImage})` }
+    : undefined;
+
   return (
-    <div className="container" onPointerDown={handleFirstInteraction}>
+    <div
+      className={`container ${backgroundImage ? 'container-with-bg' : ''}`.trim()}
+      style={containerStyle}
+      onPointerDown={handleFirstInteraction}
+    >
       <Header musicEnabled={musicEnabled} onToggleMusic={handleToggleMusic} />
       <audio ref={introRef} src="/music/intro.mp3" preload="auto" />
       <audio ref={gameRef} src="/music/game.mp3" preload="auto" />

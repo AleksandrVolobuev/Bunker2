@@ -131,6 +131,24 @@ const FACTS = [
   "Знает ботанику", "Умеет строить укрытия", "Не имеет особых навыков"
 ];
 
+const CATASTROPHE_IMAGE_MAP = {
+  "Ядерная война": "nuclear-war.jpg",
+  "Пандемия зомби": "zombie-pandemic.jpg",
+  "Астероид": "asteroid.jpg",
+  "Климатическая катастрофа": "climate-catastrophe.jpg",
+  "Извержение супервулкана": "supervolcano-eruption.jpg",
+  "Глобальный сбой электросетей": "global-power-grid-failure.jpg",
+  "Нанопандемия": "nanopandemic.jpg",
+  "Инопланетное вторжение": "alien-invasion.jpg",
+  "Биотерроризм": "bioterrorism.jpg",
+  "Солнечная супервспышка": "solar-superflare.jpg",
+  "Коллапс магнитного поля Земли": "magnetic-field-collapse.png",
+  "Глобальная засуха": "global-drought.jpg",
+  "Токсическое облако": "toxic-cloud.png"
+};
+
+const CATASTROPHES = Object.keys(CATASTROPHE_IMAGE_MAP);
+
 /* -------- Комнаты -------- */
 const rooms = {};
 
@@ -145,17 +163,18 @@ function createPlayer(name, socketId, isHost) {
     card: null,
     revealed: null,
     hasRevealed: false,
-    hasVoted: false
+    hasVoted: false,
+    revealedFields: []
   };
 }
 
-function generateCard() {
+function generateCard(cardFields) {
   const profession = PROFESSIONS[Math.floor(Math.random() * PROFESSIONS.length)];
   const sex = Math.random() > 0.5 ? "Мужчина" : "Женщина";
   const professionKey = PROFESSION_IMAGE_MAP[profession] || "unknown";
   const genderKey = sex === "Женщина" ? "f" : "m";
 
-  return {
+  const fullCard = {
     profession,
     health: HEALTH[Math.floor(Math.random() * HEALTH.length)],
     hobby: HOBBIES[Math.floor(Math.random() * HOBBIES.length)],
@@ -167,11 +186,26 @@ function generateCard() {
     sex,
     professionImage: `${professionKey}-${genderKey}.png`
   };
+
+  if (!Array.isArray(cardFields) || cardFields.length === 0) {
+    return fullCard;
+  }
+
+  const limitedCard = {};
+  cardFields.forEach((field) => {
+    if (field in fullCard) {
+      limitedCard[field] = fullCard[field];
+    }
+  });
+  if (cardFields.includes("profession") && fullCard.professionImage) {
+    limitedCard.professionImage = fullCard.professionImage;
+  }
+  return limitedCard;
 }
 
 function dealCards(room) {
   room.players.forEach(player => {
-    player.card = generateCard();
+    player.card = generateCard(room.cardFields);
     io.to(player.socketId).emit("yourCard", player.card);
   });
 }
@@ -196,6 +230,8 @@ function getPublicRoom(room) {
     phase: room.phase,
     bunkerInfo: room.bunkerInfo,
     catastrophe: room.catastrophe,
+    catastropheImage: room.catastropheImage,
+    cardFields: room.cardFields || [],
     players: room.players.map(p => ({
       id: p.id,
       name: p.name,
@@ -332,19 +368,17 @@ io.on("connection", socket => {
       messages: [], // 💬 Чат
       timer: null,  // ⏱️ Таймер
       timerInterval: null, // Интервал для таймера
+      cardFields: [],
       bunkerInfo: {
         capacity: 2, // Временное значение, пересчитается при старте
         duration: Math.floor(Math.random() * 6) + 5, // 5-10 лет
         supplies: ["Еда на 2 года", "Вода", "Электричество", "Медикаменты"]
       },
-      catastrophe: [
-        "Ядерная война",
-        "Пандемия зомби",
-        "Астероид",
-        "Климатическая катастрофа",
-        "Извержение супервулкана"
-      ][Math.floor(Math.random() * 5)]
+      catastrophe: CATASTROPHES[Math.floor(Math.random() * CATASTROPHES.length)],
+      catastropheImage: null
     };
+
+    rooms[roomId].catastropheImage = CATASTROPHE_IMAGE_MAP[rooms[roomId].catastrophe] || null;
 
     socket.join(roomId);
     const publicRoom = getPublicRoom(rooms[roomId]);
@@ -400,6 +434,10 @@ io.on("connection", socket => {
     } else {
       room.bunkerInfo.capacity = Math.max(2, Math.floor(playerCount * 0.6)); // Для 6+ → 60%
     }
+
+    // Поля карточек зависят от количества игроков (минимум 1, максимум по списку).
+    const fieldsCount = Math.max(1, Math.min(playerCount, CARD_FIELDS.length));
+    room.cardFields = CARD_FIELDS.slice(0, fieldsCount);
 
     console.log(`🎮 Игра началась! Игроков: ${playerCount}, Мест в бункере: ${room.bunkerInfo.capacity}, Раундов: ~${playerCount - room.bunkerInfo.capacity}`);
 
@@ -457,8 +495,13 @@ io.on("connection", socket => {
       return;
     }
 
-    if (!CARD_FIELDS.includes(field)) {
+    if (!room.cardFields || !room.cardFields.includes(field)) {
       socket.emit("error", "Неверное поле карты");
+      return;
+    }
+
+    if (player.revealedFields && player.revealedFields.includes(field)) {
+      socket.emit("error", "Это поле уже раскрывалось ранее");
       return;
     }
 
@@ -479,14 +522,18 @@ io.on("connection", socket => {
       round: room.round || 0
     };
     player.hasRevealed = true;
+    if (!player.revealedFields) {
+      player.revealedFields = [];
+    }
+    player.revealedFields.push(field);
 
     const systemMessage = {
       id: randomUUID(),
       playerId: player.id,
       playerName: player.name,
       isAlive: player.isAlive,
-      isSystem: true,
-      message: `Показал: ${label} — ${value}`,
+      isSystem: false,
+      message: `${player.name} показал: ${label} — ${value}`,
       timestamp: Date.now()
     };
 
