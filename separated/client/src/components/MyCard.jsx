@@ -32,6 +32,8 @@ const FIELD_ORDER = [
 const MyCard = ({ card, cardFields, canReveal, onReveal }) => {
   const defaultField = useMemo(() => 'profession', []);
   const [selectedField, setSelectedField] = useState(defaultField);
+  const baseUrl = import.meta.env.BASE_URL || '/';
+  const toAssetUrl = (path) => `${baseUrl}${path}`;
 
   if (!card) {
     return null;
@@ -63,7 +65,7 @@ const MyCard = ({ card, cardFields, canReveal, onReveal }) => {
           <div className="my-card-image-wrap">
             <img
               className="my-card-image"
-              src={`/images/${card.professionImage}`}
+              src={toAssetUrl(`images/${card.professionImage}`)}
               alt={`Профессия: ${card.profession}`}
               loading="lazy"
             />

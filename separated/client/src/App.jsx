@@ -77,12 +77,15 @@ const App = () => {
     activeTrackRef.current = desiredTrack;
   }, [state.screen, musicEnabled, hasUserInteracted]);
 
+  const baseUrl = import.meta.env.BASE_URL || '/';
+  const toAssetUrl = (path) => `${baseUrl}${path}`;
+
   const backgroundImage = state.screen === 'room'
     ? state.room?.catastropheImage
-      ? `/images/${state.room.catastropheImage}`
+      ? toAssetUrl(`images/${state.room.catastropheImage}`)
       : null
     : state.screen === 'main'
-      ? '/images/bunker.jpg'
+      ? toAssetUrl('images/bunker.jpg')
       : null;
 
   const containerStyle = backgroundImage
@@ -96,8 +99,8 @@ const App = () => {
       onPointerDown={handleFirstInteraction}
     >
       <Header musicEnabled={musicEnabled} onToggleMusic={handleToggleMusic} />
-      <audio ref={introRef} src="/music/intro.mp3" preload="auto" />
-      <audio ref={gameRef} src="/music/game.mp3" preload="auto" />
+      <audio ref={introRef} src={toAssetUrl('music/intro.mp3')} preload="auto" />
+      <audio ref={gameRef} src={toAssetUrl('music/game.mp3')} preload="auto" />
       <MainScreen
         isActive={state.screen === 'main'}
         onCreateRoom={actions.createRoom}
