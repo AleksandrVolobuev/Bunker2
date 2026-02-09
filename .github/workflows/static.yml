@@ -41,7 +41,7 @@ jobs:
             separated/client/package.json
       - name: Install dependencies
         working-directory: separated/client
-        run: npm ci
+        run: npm install
       - name: Build client
         working-directory: separated/client
         run: npm run build
