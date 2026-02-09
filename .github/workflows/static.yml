@@ -36,7 +36,9 @@ jobs:
         with:
           node-version: '20'
           cache: 'npm'
-          cache-dependency-path: separated/client/package-lock.json
+          cache-dependency-path: |
+            separated/client/package-lock.json
+            separated/client/package.json
       - name: Install dependencies
         working-directory: separated/client
         run: npm ci
