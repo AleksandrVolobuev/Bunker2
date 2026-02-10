@@ -16,7 +16,7 @@
   /* Typography */
   --fs-title: calc(2.8rem + 2.4vw);
   --fs-subtitle: calc(0.9rem + 0.3vw);
-  --fs-label: calc(0.8rem + 0.2vw);
+  --fs-label: calc(1rem + 0.2vw);
   --fs-input: calc(1rem + 0.2vw);
   --fs-button: calc(1rem + 0.2vw);
   --fs-room-code: calc(2rem + 1.2vw);
@@ -43,7 +43,7 @@
   --fs-results-title: calc(2rem + 1.2vw);
   --fs-eliminated: calc(1.4rem + 0.8vw);
   --fs-chat-header: calc(1.1rem + 0.6vw);
-  --fs-chat-meta: calc(0.75rem + 0.2vw);
+  --fs-chat-meta: calc(1.1rem + 0.2vw);
   --fs-chat-time: calc(0.7rem + 0.2vw);
   --fs-chat-input: calc(0.9rem + 0.2vw);
   --fs-timer-label: calc(0.9rem + 0.2vw);
