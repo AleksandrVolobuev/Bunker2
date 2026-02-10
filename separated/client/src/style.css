@@ -42,10 +42,11 @@
   --fs-vote-btn: calc(1rem + 0.2vw);
   --fs-results-title: calc(2rem + 1.2vw);
   --fs-eliminated: calc(1.4rem + 0.8vw);
-  --fs-chat-header: calc(1.1rem + 0.6vw);
-  --fs-chat-meta: calc(1.1rem + 0.2vw);
-  --fs-chat-time: calc(0.7rem + 0.2vw);
-  --fs-chat-input: calc(0.9rem + 0.2vw);
+  --fs-chat-header: calc(1.2rem + 0.7vw);
+  --fs-chat-meta: calc(1.2rem + 0.25vw);
+  --fs-chat-time: calc(0.85rem + 0.25vw);
+  --fs-chat-text: calc(1.05rem + 0.25vw);
+  --fs-chat-input: calc(1rem + 0.25vw);
   --fs-timer-label: calc(0.9rem + 0.2vw);
   --fs-timer-time: calc(2rem + 1.2vw);
   --fs-loading: calc(1.1rem + 0.6vw);
@@ -967,6 +968,7 @@ input[type="text"]:focus {
 .chat-message-text {
   color: var(--light);
   word-wrap: break-word;
+  font-size: var(--fs-chat-text);
   line-height: var(--lh-chat);
 }
 
